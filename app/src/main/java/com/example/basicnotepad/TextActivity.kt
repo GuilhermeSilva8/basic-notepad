@@ -76,6 +76,7 @@ class TextActivity : AppCompatActivity() {
         return super.onSupportNavigateUp()
     }
 
+    /* shows a custom dialog when we press the back button */
     override fun onBackPressed() {
 
         val dialog = TextDialogFragment()

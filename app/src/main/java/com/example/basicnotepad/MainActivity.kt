@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
             val intent = Intent(this, TextActivity::class.java)
             startActivity(intent)
+            finish()
 
         }
     }
