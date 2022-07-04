@@ -3,7 +3,10 @@ package com.example.basicnotepad
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import com.example.basicnotepad.databinding.ActivityTextBinding
 
@@ -32,6 +35,7 @@ class TextActivity : AppCompatActivity() {
 
         }
 
+        /*  when clicking on the fab we go to the MainActivity and send the text by the intent */
         binding.fabSave.setOnClickListener {
 
             val intent = Intent(this, MainActivity::class.java)
@@ -41,5 +45,26 @@ class TextActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    /* menu */
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.text_menu, menu)
+        return true
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.menuDelete -> {
+                Toast.makeText(this, "Remover elemento", Toast.LENGTH_SHORT).show()
+
+                true
+            }
+            else -> {
+                false
+            }
+        }
     }
 }
