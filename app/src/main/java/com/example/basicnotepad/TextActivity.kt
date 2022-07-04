@@ -19,6 +19,8 @@ class TextActivity : AppCompatActivity() {
         binding = ActivityTextBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         /* fab initially invisible */
         binding.fabSave.visibility = View.INVISIBLE
 
@@ -66,5 +68,15 @@ class TextActivity : AppCompatActivity() {
                 false
             }
         }
+    }
+
+    /* putting a visible back button with the same action as the phone back button */
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }
