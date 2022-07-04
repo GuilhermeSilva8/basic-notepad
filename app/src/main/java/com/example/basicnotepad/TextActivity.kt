@@ -77,6 +77,9 @@ class TextActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+
+        val dialog = TextDialogFragment()
+        dialog.show(supportFragmentManager, "TextDialog")
+
     }
 }
