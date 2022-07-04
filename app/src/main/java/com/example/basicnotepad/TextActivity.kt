@@ -40,9 +40,9 @@ class TextActivity : AppCompatActivity() {
         /*  when clicking on the fab we go to the MainActivity and send the text by the intent */
         binding.fabSave.setOnClickListener {
 
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("TEXT", binding.etText.text.toString())
-            startActivity(intent)
+            val data = Intent()
+            data.putExtra("TEXT", binding.etText.text.toString())
+            setResult(RESULT_OK, data)
             finish()
 
         }
