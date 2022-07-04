@@ -1,5 +1,6 @@
 package com.example.basicnotepad
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -31,6 +32,14 @@ class TextActivity : AppCompatActivity() {
 
         }
 
+        binding.fabSave.setOnClickListener {
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("TEXT", binding.etText.text.toString())
+            startActivity(intent)
+            finish()
+
+        }
 
     }
 }

@@ -14,6 +14,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val text = intent.getStringExtra("TEXT")
+        binding.textView.text = text
+
         binding.floatingActionButton.setOnClickListener {
 
             val intent = Intent(this, TextActivity::class.java)
