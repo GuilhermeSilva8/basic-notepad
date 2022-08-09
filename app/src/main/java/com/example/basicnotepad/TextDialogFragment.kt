@@ -25,8 +25,8 @@ class TextDialogFragment: DialogFragment() {
 
         binding.btnClose.setOnClickListener {
 
-            val intent = Intent(activity, MainActivity::class.java)
-            startActivity(intent)
+            //val intent = Intent(activity, MainActivity::class.java)
+            //startActivity(intent)
             requireActivity().finish()
             dismiss()
 

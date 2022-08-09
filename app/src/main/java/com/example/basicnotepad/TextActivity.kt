@@ -22,6 +22,12 @@ class TextActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         /* fab initially invisible */
+        val text = intent.getStringExtra("ACTUAL_TEXT")
+
+        if(text != null) {
+            binding.etText.setText(text)
+        }
+
         binding.fabSave.visibility = View.INVISIBLE
 
         val initialText = binding.etText.text.toString()

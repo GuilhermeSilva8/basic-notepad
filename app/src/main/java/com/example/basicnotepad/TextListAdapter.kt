@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicnotepad.databinding.ResItemTextBinding
 
-class TextListAdapter : RecyclerView.Adapter<TextListAdapter.TextViewHolder>() {
+class TextListAdapter(private val onItemCLicked : (Text) -> Unit) : RecyclerView.Adapter<TextListAdapter.TextViewHolder>() {
 
     private var listItem = ArrayList<Text>()
 
@@ -16,7 +16,7 @@ class TextListAdapter : RecyclerView.Adapter<TextListAdapter.TextViewHolder>() {
     override fun onBindViewHolder(holder: TextViewHolder, position: Int) {
         when(holder) {
             is TextViewHolder -> {
-                holder.bind(listItem[position])
+                holder.bind(listItem[position], onItemCLicked)
             }
         }
     }
@@ -30,10 +30,16 @@ class TextListAdapter : RecyclerView.Adapter<TextListAdapter.TextViewHolder>() {
         private var text = itemView.tvText
         private val date = itemView.tvDate
 
-        fun bind(item: Text) {
+        fun bind(item: Text, onItemCLicked: (Text) -> Unit) {
 
             text.text = item.text
             date.text = item.date
+
+            itemView.setOnClickListener {
+
+                onItemCLicked(item)
+
+            }
 
         }
 
