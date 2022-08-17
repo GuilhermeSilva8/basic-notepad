@@ -3,16 +3,20 @@ package com.example.basicnotepad
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import com.example.basicnotepad.databinding.ActivityTextBinding
+import java.util.*
 
 class TextActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTextBinding
+    private lateinit var list: ArrayList<Text>
+    private var pos = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +26,17 @@ class TextActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         /* fab initially invisible */
-        val text = intent.getStringExtra("ACTUAL_TEXT")
+        //val text = intent.getStringExtra("ACTUAL_TEXT")
+        list = intent.getParcelableArrayListExtra<Text>("LIST")!!
+        //Log.d("MEULOG", list.toString())
 
-        if(text != null) {
+        pos = intent.getIntExtra("POSITION", -1)
+
+        if(pos != -1) {
+
+            val text = list[pos].text
             binding.etText.setText(text)
+
         }
 
         binding.fabSave.visibility = View.INVISIBLE
@@ -47,7 +58,23 @@ class TextActivity : AppCompatActivity() {
         binding.fabSave.setOnClickListener {
 
             val data = Intent()
-            data.putExtra("TEXT", binding.etText.text.toString())
+            //data.putExtra("TEXT", binding.etText.text.toString())
+            if(initialText.isEmpty()) {
+
+                val newItem = Text(
+                    binding.etText.text.toString(),
+                    Calendar.getInstance().time.toString()
+                )
+                list.add(newItem)
+
+            } else {
+
+                list[pos].text = binding.etText.text.toString()
+                list[pos].date = Calendar.getInstance().time.toString()
+
+            }
+
+            data.putParcelableArrayListExtra("NEW_LIST", list)
             setResult(RESULT_OK, data)
             finish()
 
@@ -66,7 +93,21 @@ class TextActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.menuDelete -> {
-                Toast.makeText(this, "Remover elemento", Toast.LENGTH_SHORT).show()
+
+                if(pos == -1) {
+
+                    finish()
+
+                } else {
+
+                    list.removeAt(pos)
+                    val data = Intent()
+                    data.putParcelableArrayListExtra("NEW_LIST", list)
+                    setResult(RESULT_OK, data)
+                    finish()
+                    Toast.makeText(this, "Nota removida com sucesso", Toast.LENGTH_SHORT).show()
+
+                }
 
                 true
             }
