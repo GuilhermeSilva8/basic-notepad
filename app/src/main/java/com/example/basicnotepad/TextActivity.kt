@@ -10,11 +10,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import com.example.basicnotepad.databinding.ActivityTextBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class TextActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTextBinding
+    private lateinit var database: TextAppDatabase
+    private lateinit var textDao: TextDao
     private lateinit var list: ArrayList<Text>
     private var pos = -1
 
@@ -22,6 +28,9 @@ class TextActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTextBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        database = TextAppDatabase.getDatabase(this)
+        textDao = database.textDao()
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -57,26 +66,37 @@ class TextActivity : AppCompatActivity() {
         /*  when clicking on the fab we go to the MainActivity and send the text by the intent */
         binding.fabSave.setOnClickListener {
 
-            val data = Intent()
-            //data.putExtra("TEXT", binding.etText.text.toString())
-            if(initialText.isEmpty()) {
 
-                val newItem = Text(
-                    binding.etText.text.toString(),
-                    Calendar.getInstance().time.toString()
-                )
-                list.add(newItem)
+            CoroutineScope(Dispatchers.IO).launch {
 
-            } else {
+                val data = Intent()
+                //data.putExtra("TEXT", binding.etText.text.toString())
+                if(initialText.isEmpty()) {
 
-                list[pos].text = binding.etText.text.toString()
-                list[pos].date = Calendar.getInstance().time.toString()
+                    val newItem = Text(
+                        binding.etText.text.toString(),
+                        Calendar.getInstance().time.toString()
+                    )
+                    list.add(newItem)
+                    textDao.insert(newItem)
+
+                } else {
+
+                    list[pos].text = binding.etText.text.toString()
+                    list[pos].date = Calendar.getInstance().time.toString()
+                    // atualiza a base
+
+                }
+
+                withContext(Dispatchers.Main) {
+
+                    data.putParcelableArrayListExtra("NEW_LIST", list)
+                    setResult(RESULT_OK, data)
+                    finish()
+
+                }
 
             }
-
-            data.putParcelableArrayListExtra("NEW_LIST", list)
-            setResult(RESULT_OK, data)
-            finish()
 
         }
 
@@ -130,4 +150,5 @@ class TextActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "TextDialog")
 
     }
+
 }
