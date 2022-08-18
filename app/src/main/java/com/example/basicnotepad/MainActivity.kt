@@ -9,20 +9,29 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basicnotepad.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var database: TextAppDatabase
+    private lateinit var textDao: TextDao
     private lateinit var adapter: TextListAdapter
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
-    private var items: ArrayList<Text> = ArrayList()
+    private var items: List<Text> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        database = TextAppDatabase.getDatabase(this)
+        textDao = database.textDao()
 
         /* result launcher which receives the text data from text activity and create a new item for the rv with the actual date */
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -36,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
                     items = getParcelableArrayListExtra("NEW_LIST")!!
                     //Log.d("MEULOG", items.toString())
-                    adapter.setDataSet(items)
+                    adapter.setDataSet(items as ArrayList<Text>)
                     adapter.notifyDataSetChanged()
 
                 }
@@ -49,23 +58,34 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, TextActivity::class.java)
             //val text = it.text
             //intent.putExtra("ACTUAL_TEXT", text)
-            intent.putParcelableArrayListExtra("LIST", items)
+            intent.putParcelableArrayListExtra("LIST", items as ArrayList<Text>)
             intent.putExtra("POSITION", items.indexOf(it))
             resultLauncher.launch(intent)
 
         }
 
-        adapter.setDataSet(items)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        CoroutineScope(Dispatchers.IO).launch {
+
+            items = textDao.getNotes()
+
+            withContext(Dispatchers.Main) {
+
+                adapter.setDataSet(items as ArrayList<Text>)
+                binding.recyclerView.adapter = adapter
+                binding.recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+            }
+
+        }
 
         /* fab that executes the result launcher */
         binding.floatingActionButton.setOnClickListener {
 
             val intent = Intent(this, TextActivity::class.java)
-            intent.putParcelableArrayListExtra("LIST", items)
+            intent.putParcelableArrayListExtra("LIST", items as ArrayList<Text>)
             resultLauncher.launch(intent)
 
         }
     }
+
 }
