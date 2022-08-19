@@ -14,11 +14,9 @@ class TextListAdapter(private val onItemCLicked : (Text) -> Unit) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: TextViewHolder, position: Int) {
-        when(holder) {
-            is TextViewHolder -> {
-                holder.bind(listItem[position], onItemCLicked)
-            }
-        }
+
+        holder.bind(listItem[position], onItemCLicked)
+
     }
 
     override fun getItemCount(): Int {

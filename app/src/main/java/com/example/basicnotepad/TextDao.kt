@@ -1,9 +1,6 @@
 package com.example.basicnotepad
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface TextDao {
@@ -19,5 +16,8 @@ interface TextDao {
 
     @Update
     suspend fun update(text: Text)
+
+    @Delete
+    suspend fun delete(text: Text)
 
 }

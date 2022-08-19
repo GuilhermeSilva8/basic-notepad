@@ -1,9 +1,7 @@
 package com.example.basicnotepad
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,18 +20,16 @@ class TextActivity : AppCompatActivity() {
     private lateinit var database: TextAppDatabase
     private lateinit var textDao: TextDao
     private lateinit var list: List<Text>
+    private var text: Text? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTextBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         database = TextAppDatabase.getDatabase(this)
         textDao = database.textDao()
-
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        val text = intent.getParcelableExtra<Text>("ACTUAL_TEXT")
 
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -41,15 +37,17 @@ class TextActivity : AppCompatActivity() {
 
         }
 
+        text = intent.getParcelableExtra("ACTUAL_TEXT")
+
         if(text != null) {
 
-            binding.etText.setText(text.text)
+            binding.etText.setText(text!!.text)
 
         }
 
-        binding.fabSave.visibility = View.INVISIBLE
-
         val initialText = binding.etText.text.toString()
+
+        binding.fabSave.visibility = View.INVISIBLE
 
         binding.etText.doAfterTextChanged {
 
@@ -75,11 +73,11 @@ class TextActivity : AppCompatActivity() {
 
                 } else {
 
-                    val uid = textDao.getUid(text.date)
-                    text.uid = uid
-                    text.text = binding.etText.text.toString()
-                    text.date = Calendar.getInstance().time.toString()
-                    textDao.update(text)
+                    val uid = textDao.getUid(text!!.date)
+                    text!!.uid = uid
+                    text!!.text = binding.etText.text.toString()
+                    text!!.date = Calendar.getInstance().time.toString()
+                    textDao.update(text!!)
 
                 }
 
@@ -96,7 +94,6 @@ class TextActivity : AppCompatActivity() {
 
     }
 
-    /* menu */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.text_menu, menu)
@@ -107,21 +104,35 @@ class TextActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.menuDelete -> {
-                /*
-                if(pos == -1) {
 
-                    finish()
+                    CoroutineScope(Dispatchers.IO).launch {
 
-                } else {
+                        if(text == null) {
 
-                    list.removeAt(pos)
-                    val data = Intent()
-                    data.putParcelableArrayListExtra("NEW_LIST", list)
-                    setResult(RESULT_OK, data)
-                    finish()
-                    Toast.makeText(this, "Nota removida com sucesso", Toast.LENGTH_SHORT).show()
+                            withContext(Dispatchers.Main) {
 
-                }*/
+                                finish()
+
+                            }
+
+                        } else {
+
+                            val uid = textDao.getUid(text!!.date)
+                            text!!.uid = uid
+
+                            textDao.delete(text!!)
+
+                            withContext(Dispatchers.Main) {
+
+                                setResult(RESULT_OK)
+                                finish()
+                                Toast.makeText(applicationContext, "Nota removida com sucesso", Toast.LENGTH_SHORT).show()
+
+                            }
+
+                        }
+
+                    }
 
                 true
             }
@@ -137,7 +148,6 @@ class TextActivity : AppCompatActivity() {
         return super.onSupportNavigateUp()
     }
 
-    /* shows a custom dialog when we press the back button */
     override fun onBackPressed() {
 
         val dialog = TextDialogFragment()

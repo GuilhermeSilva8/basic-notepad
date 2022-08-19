@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +30,20 @@ class MainActivity : AppCompatActivity() {
 
         database = TextAppDatabase.getDatabase(this)
         textDao = database.textDao()
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            items = textDao.getNotes()
+
+            withContext(Dispatchers.Main) {
+
+                adapter.setDataSet(items as ArrayList<Text>)
+                binding.recyclerView.adapter = adapter
+                binding.recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+            }
+
+        }
 
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if(result.resultCode == Activity.RESULT_OK) {
@@ -52,6 +64,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.floatingActionButton.setOnClickListener {
+
+            val intent = Intent(this, TextActivity::class.java)
+            resultLauncher.launch(intent)
+
+        }
+
         adapter = TextListAdapter {
 
             val intent = Intent(this, TextActivity::class.java)
@@ -60,26 +79,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-
-            items = textDao.getNotes()
-
-            withContext(Dispatchers.Main) {
-
-                adapter.setDataSet(items as ArrayList<Text>)
-                binding.recyclerView.adapter = adapter
-                binding.recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-            }
-
-        }
-
-        binding.floatingActionButton.setOnClickListener {
-
-            val intent = Intent(this, TextActivity::class.java)
-            resultLauncher.launch(intent)
-
-        }
     }
 
 }
