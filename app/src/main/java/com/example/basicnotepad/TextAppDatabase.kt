@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Text::class], version = 1)
+@Database(entities = [Text::class], version = 3)
 abstract class TextAppDatabase : RoomDatabase() {
 
     abstract fun textDao(): TextDao
@@ -21,7 +21,8 @@ abstract class TextAppDatabase : RoomDatabase() {
                     context.applicationContext,
                     TextAppDatabase::class.java,
                     "text_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

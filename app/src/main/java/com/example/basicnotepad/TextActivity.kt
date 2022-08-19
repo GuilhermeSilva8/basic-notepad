@@ -21,8 +21,7 @@ class TextActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTextBinding
     private lateinit var database: TextAppDatabase
     private lateinit var textDao: TextDao
-    private lateinit var list: ArrayList<Text>
-    private var pos = -1
+    private lateinit var list: List<Text>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,17 +33,17 @@ class TextActivity : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        /* fab initially invisible */
-        //val text = intent.getStringExtra("ACTUAL_TEXT")
-        list = intent.getParcelableArrayListExtra<Text>("LIST")!!
-        //Log.d("MEULOG", list.toString())
+        val text = intent.getParcelableExtra<Text>("ACTUAL_TEXT")
 
-        pos = intent.getIntExtra("POSITION", -1)
+        CoroutineScope(Dispatchers.IO).launch {
 
-        if(pos != -1) {
+            list = textDao.getNotes()
 
-            val text = list[pos].text
-            binding.etText.setText(text)
+        }
+
+        if(text != null) {
+
+            binding.etText.setText(text.text)
 
         }
 
@@ -52,7 +51,6 @@ class TextActivity : AppCompatActivity() {
 
         val initialText = binding.etText.text.toString()
 
-        /* if the text is different from the initial text, the fab is visible */
         binding.etText.doAfterTextChanged {
 
             if(binding.etText.text.toString() != initialText) {
@@ -63,35 +61,31 @@ class TextActivity : AppCompatActivity() {
 
         }
 
-        /*  when clicking on the fab we go to the MainActivity and send the text by the intent */
         binding.fabSave.setOnClickListener {
-
 
             CoroutineScope(Dispatchers.IO).launch {
 
-                val data = Intent()
-                //data.putExtra("TEXT", binding.etText.text.toString())
-                if(initialText.isEmpty()) {
+                if(text == null) {
 
                     val newItem = Text(
                         binding.etText.text.toString(),
                         Calendar.getInstance().time.toString()
                     )
-                    list.add(newItem)
                     textDao.insert(newItem)
 
                 } else {
 
-                    list[pos].text = binding.etText.text.toString()
-                    list[pos].date = Calendar.getInstance().time.toString()
-                    // atualiza a base
+                    val uid = textDao.getUid(text.date)
+                    text.uid = uid
+                    text.text = binding.etText.text.toString()
+                    text.date = Calendar.getInstance().time.toString()
+                    textDao.update(text)
 
                 }
 
                 withContext(Dispatchers.Main) {
 
-                    data.putParcelableArrayListExtra("NEW_LIST", list)
-                    setResult(RESULT_OK, data)
+                    setResult(RESULT_OK)
                     finish()
 
                 }
@@ -113,7 +107,7 @@ class TextActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.menuDelete -> {
-
+                /*
                 if(pos == -1) {
 
                     finish()
@@ -127,7 +121,7 @@ class TextActivity : AppCompatActivity() {
                     finish()
                     Toast.makeText(this, "Nota removida com sucesso", Toast.LENGTH_SHORT).show()
 
-                }
+                }*/
 
                 true
             }
