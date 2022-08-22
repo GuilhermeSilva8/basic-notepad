@@ -3,31 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".TextActivity">
+    android:layout_height="wrap_content"
+    android:elevation="2dp"
+    android:outlineProvider="bounds">
 
-    <EditText
-        android:id="@+id/etText"
+    <TextView
+        android:id="@+id/tvText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:backgroundTint="@color/white"
+        android:maxLines="3"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus aliquam lobortis volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
+        android:textSize="18sp"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSave"
+    <TextView
+        android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/purple_500"
-        android:src="@drawable/ic_done"
-        app:tint="@null"
-        app:borderWidth="0dp"
+        android:layout_margin="8dp"
+        android:text="x de xxxxxxxxx de xxxx xx:xx:xx"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

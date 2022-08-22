@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bloco de Notas Básico</string>
+    <string name="remove_note">Nota removida com sucesso</string>
+    <string name="back_button">Você realmente deseja fechar o texto sem salvar?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="close">Fechar</string>
+</resources>
