@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">BasicNotepad</string>
+    <string name="app_name">Basic Notepad</string>
+    <string name="remove_note">Note was removed sucessfully</string>
+    <string name="back_button">Are you sure you want to close the text without saving?</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
 </resources>

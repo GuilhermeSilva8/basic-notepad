@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.*
 
 class TextActivity : AppCompatActivity() {
@@ -67,7 +68,8 @@ class TextActivity : AppCompatActivity() {
 
                     val newItem = Text(
                         binding.etText.text.toString(),
-                        Calendar.getInstance().time.toString()
+                        //Calendar.getInstance().time.toString()
+                        SimpleDateFormat("dd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
                     )
                     textDao.insert(newItem)
 
@@ -76,7 +78,8 @@ class TextActivity : AppCompatActivity() {
                     val uid = textDao.getUid(text!!.date)
                     text!!.uid = uid
                     text!!.text = binding.etText.text.toString()
-                    text!!.date = Calendar.getInstance().time.toString()
+                    //text!!.date = Calendar.getInstance().time.toString()
+                    text!!.date = SimpleDateFormat("dd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
                     textDao.update(text!!)
 
                 }
@@ -126,7 +129,7 @@ class TextActivity : AppCompatActivity() {
 
                                 setResult(RESULT_OK)
                                 finish()
-                                Toast.makeText(applicationContext, "Nota removida com sucesso", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, getString(R.string.remove_note), Toast.LENGTH_SHORT).show()
 
                             }
 
